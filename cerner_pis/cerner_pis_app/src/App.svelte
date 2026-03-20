@@ -74,6 +74,7 @@
     localStorage.setItem(NEED_PATIENT_BANNER_KEY, String(data.need_patient_banner));
     localStorage.setItem(ENCOUNTER_KEY, data.encounter);
     localStorage.setItem(USER_KEY,      data.user);
+    localStorage.setItem('smart_token_expiry',    String(Date.now() + (data.expires_in * 1000)));
 
     // Cleanup
     localStorage.removeItem(CODE_VERIFIER_KEY);
@@ -92,11 +93,12 @@
 
     try {
       // State C: valid session already in localStorage
-      if (localStorage.getItem(ACCESS_TOKEN_KEY) && localStorage.getItem(PATIENT_ID_KEY)) {
-        needPatientBanner.set(localStorage.getItem(NEED_PATIENT_BANNER_KEY) === 'true');
-        isAuthenticated.set(true);
-        return;
-      }
+    const expiry = parseInt(localStorage.getItem('smart_token_expiry') ?? '0');
+    if (localStorage.getItem(ACCESS_TOKEN_KEY) && localStorage.getItem(PATIENT_ID_KEY) && Date.now() < expiry) {
+    needPatientBanner.set(localStorage.getItem(NEED_PATIENT_BANNER_KEY) === 'true');
+    isAuthenticated.set(true);
+    return;
+    }
 
       // State B: returning from Cerner auth
       if (code) {

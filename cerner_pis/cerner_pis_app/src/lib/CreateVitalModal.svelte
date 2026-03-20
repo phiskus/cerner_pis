@@ -10,21 +10,95 @@
   } = $props();
 
   // ─── Vital Type Config ───────────────────────────────────────────────────────
-  const VITAL_TYPES = [
-    { label: 'Body Weight',      loinc: '29463-7', display: 'Body weight',             unit: 'kg',   ucum: 'kg',      dual: false },
-    { label: 'Body Height',      loinc: '8302-2',  display: 'Body height',             unit: 'cm',   ucum: 'cm',      dual: false },
-    { label: 'Heart Rate',       loinc: '8867-4',  display: 'Heart rate',              unit: '/min', ucum: '/min',    dual: false },
-    { label: 'Blood Pressure',   loinc: '85354-9', display: 'Blood pressure',          unit: 'mmHg', ucum: 'mm[Hg]', dual: true  },
-    { label: 'Body Temperature', loinc: '8331-1',  display: 'Body temperature',        unit: 'Cel',  ucum: 'Cel',     dual: false },
-    { label: 'O2 Saturation',    loinc: '703498', display: 'Oxygen saturation',       unit: '%',    ucum: '%',       dual: false },
-    { label: 'Respiratory Rate', loinc: '9279-1',  display: 'Respiratory rate',        unit: 'breaths/minute', ucum: 'min',    dual: false },
-  ];
-
+  const CERNER_SYSTEM = 'https://fhir.cerner.com/ec2458f2-1e24-41c8-b71b-0e701af7583d/codeSet/72';
   const LOINC_SYSTEM = 'http://loinc.org';
   const UCUM_SYSTEM  = 'http://unitsofmeasure.org';
-  const VITAL_CATEGORY = {
-    coding: [{ system: 'http://terminology.hl7.org/CodeSystem/observation-category', code: 'vital-signs' }]
-  };
+  const VITAL_CATEGORY = { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/observation-category', code: 'vital-signs', display: 'Vital Signs' }],
+  text: 'Vital Signs'
+};
+
+  const VITAL_TYPES = [
+    {
+
+      label: 'Weight Measured',
+      text: 'Weight Measured',
+      unit: 'kg', ucum: 'kg', dual: false,
+      codings: [
+        { system: CERNER_SYSTEM, code: '4154120', display: 'Weight Measured', userSelected: true },
+        { system: LOINC_SYSTEM,  code: '29463-7', display: 'Body weight' },
+        { system: LOINC_SYSTEM,  code: '3141-9',  display: 'Body weight Measured' },
+      ],
+    },
+    {
+      label: 'Height/Length Measured',
+      text: 'Height/Length Measured',
+      unit: 'cm', ucum: 'cm', dual: false,
+      codings: [
+        { system: CERNER_SYSTEM, code: '4154126', display: 'Height/Length Measured', userSelected: true },
+        { system: LOINC_SYSTEM,  code: '3137-7',  display: 'Body height Measured' },
+        { system: LOINC_SYSTEM,  code: '8302-2',  display: 'Body height' },
+      ],
+    },
+    {
+      label: 'Body Mass Index',
+      text: 'Body Mass Index Measured',
+      unit: 'kg/m2', ucum: 'kg/m2', dual: false,
+      codings: [
+        { system: CERNER_SYSTEM, code: '4154132', display: 'Body Mass Index Measured', userSelected: true },
+        { system: LOINC_SYSTEM,  code: '39156-5', display: 'Body mass index (BMI) [Ratio]' },
+      ],
+    },
+    {
+      label: 'Pulse Sitting',
+      text: 'Pulse Sitting',
+      unit: 'bpm', ucum: '/min', dual: false,
+      codings: [
+        { system: CERNER_SYSTEM, code: '1164554', display: 'Pulse Sitting', userSelected: true },
+       { system: LOINC_SYSTEM,  code: '69000-8', display: 'Heart rate --sitting' },
+        { system: LOINC_SYSTEM,  code: '8867-4',  display: 'Heart rate' },
+      ],
+    },
+    {
+      label: 'Blood Pressure',
+      text: 'Blood pressure',
+      unit: 'mmHg', ucum: 'mm[Hg]', dual: true,
+      codings: [
+        { system: LOINC_SYSTEM, code: '85354-9', display: 'Blood pressure panel with all children optional' },
+      ],
+    },
+    {
+      label: 'Temperature Oral',
+      text: 'Temperature Oral',
+      unit: 'degC', ucum: 'Cel', dual: false,
+      codings: [
+        { system: CERNER_SYSTEM, code: '703558',  display: 'Temperature Oral', userSelected: true },
+        { system: LOINC_SYSTEM,  code: '8310-5',  display: 'Body temperature' },
+        { system: LOINC_SYSTEM,  code: '8331-1',  display: 'Oral temperature' },
+      ],
+    },
+    {
+      label: 'O2 Saturation',
+      text: 'Oxygen Saturation',
+      unit: '%', ucum: '%', dual: false,
+      codings: [
+        { system: CERNER_SYSTEM, code: '703498',  display: 'Oxygen Saturation', userSelected: true },
+        { system: LOINC_SYSTEM,  code: '2708-6',  display: 'Oxygen saturation in Arterial blood' },
+        { system: LOINC_SYSTEM,  code: '59408-5', display: 'Oxygen saturation in Arterial blood by Pulse oximetry' },
+      ],
+    },
+    {
+      label: 'Respiratory Rate',
+      text: 'Respiratory rate',
+      unit: 'breaths/minute', ucum: 'min', dual: false,
+      codings: [
+        { system: LOINC_SYSTEM, code: '9279-1', display: 'Respiratory rate' },
+      ],
+    },
+  ];
+
+
+
+
 
   // ─── Form State ──────────────────────────────────────────────────────────────
   let selectedType = $state(VITAL_TYPES[0]);
@@ -38,6 +112,9 @@
   // ─── Build FHIR Observation ──────────────────────────────────────────────────
   function buildObservation() {
 
+    
+
+
     const pid = localStorage.getItem(PATIENT_ID_KEY);
     const encounter  = localStorage.getItem(ENCOUNTER_KEY);   // 422 error fix
     const user       = localStorage.getItem(USER_KEY);        // 422 error fix
@@ -47,8 +124,8 @@
       status: 'final',
       category: [VITAL_CATEGORY],
       code: {
-        coding: [{ system: LOINC_SYSTEM, code: selectedType.loinc, display: selectedType.display }],
-        text: selectedType.display,
+        coding: buildCodings(),
+        text: selectedType.text,
       },
       subject: { reference: `Patient/${pid}` },
       encounter:         { reference: `Encounter/${encounter}` },
@@ -96,15 +173,25 @@
       },
     };
   }
+  function buildCodings() {
+  // Cerner rejects mixing proprietary + LOINC — use proprietary if available, else LOINC
+  const cernerCode = selectedType.codings.find(c => c.system === CERNER_SYSTEM);
+  if (cernerCode) return [cernerCode];
+  return [selectedType.codings.find(c => c.system === LOINC_SYSTEM)!];
+}
+
 
   // ─── Submit ──────────────────────────────────────────────────────────────────
   async function handleSubmit() {
     error = '';
     submitting = true;
+    const obs = buildObservation();
+    console.log('Sending:', JSON.stringify(obs, null, 2));
     try {
-      await createVital(buildObservation());
+      await createVital(obs);
       oncreated();
     } catch (e: any) {
+      console.log('422 details:', JSON.stringify(e?.response?.data, null, 2)); 
       error = e?.response?.data?.issue?.[0]?.diagnostics ?? e?.message ?? 'Failed to create vital.';
     } finally {
       submitting = false;

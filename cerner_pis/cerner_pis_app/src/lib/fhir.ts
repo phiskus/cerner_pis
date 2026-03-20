@@ -2,6 +2,27 @@ import axios from 'axios';
 import { ACCESS_TOKEN_KEY, FHIR_BASE_URL_KEY } from '../config';
 import type { Bundle, Patient, Observation } from './store';
 
+// ─── Auto-logout on expired token ────────────────────────────────────────────
+axios.interceptors.response.use(
+  res => res,
+  err => {
+    const status = err?.response?.status;
+    const body   = err?.response?.data;
+    // Catch both standard 401 AND Cerner's token error wrapped in 422
+    const isTokenError = status === 401
+      || body?.code === 401
+      || body?.message?.includes('token-required');
+
+    if (isTokenError) {
+      localStorage.clear();
+      window.location.href = '/';
+    }
+    return Promise.reject(err);
+  }
+);
+
+
+
 // ─── Private Helpers ──────────────────────────────────────────────────────────
 
 function baseUrl(): string {
@@ -11,6 +32,8 @@ function baseUrl(): string {
 function authHeader() {
   return { Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN_KEY)}` };
 }
+
+
 
 // ─── Public Transformation Helpers ───────────────────────────────────────────
 

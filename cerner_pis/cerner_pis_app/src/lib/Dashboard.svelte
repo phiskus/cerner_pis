@@ -32,8 +32,22 @@
       patient.set(p);
       vitals.set(bundleEntries(bundle));
       // TEMP: log full patient and vitals for debugging
-      bundleEntries(bundle).forEach(v => {
+      const seen: Record<string, boolean> = {};
+      bundleEntries(bundle).forEach((v: any) => {
+        const text = v.code?.text;
+        if (seen[text]) return;
+        seen[text] = true;
+        console.log(text, '→', JSON.stringify(v.code?.coding));
+});
+
+      bundleEntries(bundle).forEach((v: any) => {
+
         const loinc = v.code?.coding?.find((c: any) => c.system === 'http://loinc.org');
+        
+           if (v.code?.text === 'Pulse Sitting') {
+              console.log('Full Pulse Sitting obs:', JSON.stringify(v, null, 2));
+            return; // only log the first one
+        }
         console.log({
                   loinc:   loinc?.code,
                   display: loinc?.display ?? v.code?.text,
@@ -57,9 +71,7 @@
   }
 
   function handleLogout() {
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
-    localStorage.removeItem(PATIENT_ID_KEY);
-    localStorage.removeItem(NEED_PATIENT_BANNER_KEY);
+    localStorage.clear();
     patient.set(null);
     vitals.set([]);
     isAuthenticated.set(false);
