@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createVital } from './fhir';
   import { patientId } from './store';
-  import { PATIENT_ID_KEY } from '../config';
+  import { PATIENT_ID_KEY, ENCOUNTER_KEY, USER_KEY } from '../config';
 
   // ─── Props ──────────────────────────────────────────────────────────────────
   let { onclose, oncreated }: {
@@ -37,7 +37,11 @@
 
   // ─── Build FHIR Observation ──────────────────────────────────────────────────
   function buildObservation() {
+
     const pid = localStorage.getItem(PATIENT_ID_KEY);
+    const encounter  = localStorage.getItem(ENCOUNTER_KEY);   // 422 error fix
+    const user       = localStorage.getItem(USER_KEY);        // 422 error fix
+
     const base = {
       resourceType: 'Observation',
       status: 'final',
@@ -47,7 +51,23 @@
         text: selectedType.display,
       },
       subject: { reference: `Patient/${pid}` },
+      encounter:         { reference: `Encounter/${encounter}` },
       effectiveDateTime: new Date(effectiveDateTime).toISOString(),
+       performer: [{
+          reference: `Practitioner/${user}`,
+          extension: [{
+            url: 'http://hl7.org/fhir/StructureDefinition/event-performerFunction',
+            valueCodeableConcept: {
+              coding: [{
+              system: 'http://terminology.hl7.org/CodeSystem/v3-ParticipationType',
+              code: 'LA',
+              display: 'legal authenticator',
+            }],
+          text: 'legal authenticator',
+        },
+      }],
+    }],
+    
     };
 
     if (selectedType.dual) {

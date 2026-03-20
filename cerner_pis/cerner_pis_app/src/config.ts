@@ -16,3 +16,7 @@ export const FHIR_BASE_URL_KEY       = "smart_fhir_base_url";
 
 // EHR context
 export const NEED_PATIENT_BANNER_KEY = "smart_need_patient_banner";
+
+//Token response 
+export const ENCOUNTER_KEY = 'smart_encounter';
+export const USER_KEY      = 'smart_user';

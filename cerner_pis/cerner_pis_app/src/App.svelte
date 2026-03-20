@@ -12,6 +12,8 @@
     TOKEN_URL_KEY,
     FHIR_BASE_URL_KEY,
     NEED_PATIENT_BANNER_KEY,
+    ENCOUNTER_KEY,
+    USER_KEY,
   } from './config';
   import { isAuthenticated, needPatientBanner } from './lib/store';
   import Dashboard from './lib/Dashboard.svelte';
@@ -70,6 +72,8 @@
     localStorage.setItem(ACCESS_TOKEN_KEY,        data.access_token);
     localStorage.setItem(PATIENT_ID_KEY,          data.patient);
     localStorage.setItem(NEED_PATIENT_BANNER_KEY, String(data.need_patient_banner));
+    localStorage.setItem(ENCOUNTER_KEY, data.encounter);
+    localStorage.setItem(USER_KEY,      data.user);
 
     // Cleanup
     localStorage.removeItem(CODE_VERIFIER_KEY);
