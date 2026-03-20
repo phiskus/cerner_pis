@@ -15,9 +15,9 @@
     { label: 'Body Height',      loinc: '8302-2',  display: 'Body height',             unit: 'cm',   ucum: 'cm',      dual: false },
     { label: 'Heart Rate',       loinc: '8867-4',  display: 'Heart rate',              unit: '/min', ucum: '/min',    dual: false },
     { label: 'Blood Pressure',   loinc: '85354-9', display: 'Blood pressure',          unit: 'mmHg', ucum: 'mm[Hg]', dual: true  },
-    { label: 'Body Temperature', loinc: '8310-5',  display: 'Body temperature',        unit: 'Cel',  ucum: 'Cel',     dual: false },
-    { label: 'O2 Saturation',    loinc: '59408-5', display: 'Oxygen saturation',       unit: '%',    ucum: '%',       dual: false },
-    { label: 'Respiratory Rate', loinc: '9279-1',  display: 'Respiratory rate',        unit: '/min', ucum: '/min',    dual: false },
+    { label: 'Body Temperature', loinc: '8331-1',  display: 'Body temperature',        unit: 'Cel',  ucum: 'Cel',     dual: false },
+    { label: 'O2 Saturation',    loinc: '703498', display: 'Oxygen saturation',       unit: '%',    ucum: '%',       dual: false },
+    { label: 'Respiratory Rate', loinc: '9279-1',  display: 'Respiratory rate',        unit: 'breaths/minute', ucum: 'min',    dual: false },
   ];
 
   const LOINC_SYSTEM = 'http://loinc.org';

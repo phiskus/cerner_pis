@@ -31,6 +31,17 @@
       ]);
       patient.set(p);
       vitals.set(bundleEntries(bundle));
+      // TEMP: log full patient and vitals for debugging
+      bundleEntries(bundle).forEach(v => {
+        const loinc = v.code?.coding?.find((c: any) => c.system === 'http://loinc.org');
+        console.log({
+                  loinc:   loinc?.code,
+                  display: loinc?.display ?? v.code?.text,
+                  unit:    v.valueQuantity?.unit,
+                  ucum:    v.valueQuantity?.code,
+  });
+});
+
     } catch (e: any) {
       error = e?.response?.data?.issue?.[0]?.diagnostics ?? e?.message ?? 'Failed to load patient data.';
     } finally {
