@@ -39,30 +39,33 @@
     url.searchParams.set('client_id',              CLIENT_ID);
     url.searchParams.set('redirect_uri',           REDIRECT_URI);
     url.searchParams.set('response_type',          'code');
-    url.searchParams.set('scope',                  'launch openid fhirUser patient/Patient.read patient/Observation.read patient/Observation.write');
+    url.searchParams.set('scope',                  'launch openid fhirUser user/Patient.rs user/Observation.rs user/Observation.cu');
+
     url.searchParams.set('launch',                 launch);
     url.searchParams.set('aud',                    iss);
     url.searchParams.set('state',                  crypto.randomUUID());
     url.searchParams.set('code_challenge',         code_challenge);
     url.searchParams.set('code_challenge_method',  'S256');
-
+    console.log('Auth URL:', url.href); // ← ADD THIS
     window.location.href = url.href;
   }
 
   // ─── State B: Returning from auth with ?code ──────────────────────────────
   async function handleAuthCallback(code: string) {
-    const tokenUrl    = localStorage.getItem(TOKEN_URL_KEY)    ?? '';
+    const tokenUrl     = localStorage.getItem(TOKEN_URL_KEY)     ?? '';
     const codeVerifier = localStorage.getItem(CODE_VERIFIER_KEY) ?? '';
 
-    const form = new FormData();
-    form.set('grant_type',    'authorization_code');
-    form.set('code',          code);
-    form.set('redirect_uri',  REDIRECT_URI);
-    form.set('client_id',     CLIENT_ID);
-    form.set('code_verifier', codeVerifier);
+    // URLSearchParams sends as application/x-www-form-urlencoded
+    const params = new URLSearchParams();
+    params.set('grant_type',    'authorization_code');
+    params.set('code',          code);
+    params.set('redirect_uri',  REDIRECT_URI);
+    params.set('client_id',     CLIENT_ID);
+    params.set('code_verifier', codeVerifier);
 
-    const { data } = await axios.postForm(tokenUrl, form);
-
+    const { data } = await axios.post(tokenUrl, params);
+    console.log('Full token response:', data); 
+    console.log('Token response:', JSON.stringify(data, null, 2));
     // Store session
     localStorage.setItem(ACCESS_TOKEN_KEY,        data.access_token);
     localStorage.setItem(PATIENT_ID_KEY,          data.patient);

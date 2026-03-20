@@ -1,5 +1,6 @@
 // ─── OAuth / App Identity ───────────────────────────────────────────────────
-export const CLIENT_ID   = "";                       // ← fill in after Cerner registration
+export const CLIENT_ID   = "01f392f7-4b2c-4197-8f92-1543f32922df";  // ID for Cerner App Module_3_b
+//export const CLIENT_ID   = "e5cbb1b8-9c3d-4a0b-9c8d-7f1a1e5c3d2a";  // ID for Cerner App Module_3 (probably wrong scopes)
 export const REDIRECT_URI = "http://localhost:5173/";
 
 // ─── localStorage Keys ──────────────────────────────────────────────────────
