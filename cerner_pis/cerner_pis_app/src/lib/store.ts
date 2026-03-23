@@ -14,7 +14,11 @@ export interface Patient {
   name?: { use?: string; given?: string[]; family?: string }[];
   birthDate?: string;
   gender?: string;
-  identifier?: { system?: string; value?: string }[];
+  identifier?: {
+    system?: string;
+    value?: string;
+    type?: { coding?: { system?: string; code?: string; display?: string }[] };
+  }[];
 }
 
 export interface ObservationComponent {
@@ -51,3 +55,4 @@ export const patientId         = writable<string | null>(null);
 export const patient           = writable<Patient | null>(null);
 export const vitals            = writable<Observation[]>([]);
 export const needPatientBanner = writable<boolean>(true);
+export const sessionExpired    = writable<boolean>(false);

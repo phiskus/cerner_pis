@@ -25,7 +25,11 @@
   }
 
   function mrn(p: Patient | null): string {
-    const id = p?.identifier?.find(i => i.system?.toLowerCase().includes('mr'));
+    // Cerner uses identifier.type.coding[].code === 'MR' (HL7 v2 table 0203)
+    // rather than encoding the type in the system URL
+    const id = p?.identifier?.find(
+      i => i.type?.coding?.some(c => c.code === 'MR')
+    );
     return id?.value ?? '—';
   }
 </script>

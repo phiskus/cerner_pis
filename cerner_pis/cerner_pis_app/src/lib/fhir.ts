@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ACCESS_TOKEN_KEY, FHIR_BASE_URL_KEY } from '../config';
 import type { Bundle, Patient, Observation } from './store';
+import { sessionExpired } from './store';
 
 // ─── Auto-logout on expired token ────────────────────────────────────────────
 axios.interceptors.response.use(
@@ -15,7 +16,8 @@ axios.interceptors.response.use(
 
     if (isTokenError) {
       localStorage.clear();
-      window.location.href = '/';
+      // Show the expired overlay in the UI instead of redirecting to a dead end
+      sessionExpired.set(true);
     }
     return Promise.reject(err);
   }
