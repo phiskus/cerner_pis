@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { Building2 } from 'lucide-svelte';
   import pkceChallenge from 'pkce-challenge';
   import axios from 'axios';
   import {
@@ -41,7 +42,7 @@
     url.searchParams.set('client_id',              CLIENT_ID);
     url.searchParams.set('redirect_uri',           REDIRECT_URI);
     url.searchParams.set('response_type',          'code');
-    url.searchParams.set('scope',                  'launch openid fhirUser user/Patient.rs user/Observation.rs user/Observation.cu');
+    url.searchParams.set('scope',                  'launch openid fhirUser user/Patient.rs user/Observation.rs user/Observation.cu user/DiagnosticReport.rs user/MedicationRequest.rs');
 
     url.searchParams.set('launch',                 launch);
     url.searchParams.set('aud',                    iss);
@@ -122,20 +123,22 @@
 </script>
 
 {#if loading}
-  <div class="min-h-screen bg-gray-50 flex items-center justify-center">
-    <div class="w-10 h-10 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
+  <div class="min-h-screen bg-[#f4f6f9] flex items-center justify-center">
+    <div class="w-10 h-10 border-4 border-slate-200 border-t-teal-600 rounded-full animate-spin"></div>
   </div>
 
 {:else if $isAuthenticated}
   <Dashboard />
 
 {:else}
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
-    <div class="bg-white rounded-2xl shadow-lg p-10 w-full max-w-sm flex flex-col items-center gap-4 text-center">
-      <span class="text-5xl">🏥</span>
-      <h1 class="text-xl font-bold text-gray-800">Cerner Vitals App</h1>
-      <p class="text-sm text-gray-500">Waiting for EHR launch…</p>
-      <p class="text-xs text-gray-400">This app must be opened from within a Cerner EHR session.</p>
+  <div class="min-h-screen bg-[#f4f6f9] flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-lg p-10 w-full max-w-sm flex flex-col items-center gap-4 text-center border border-slate-200">
+      <div class="w-14 h-14 rounded-2xl bg-teal-500 flex items-center justify-center text-white">
+        <Building2 size={28} strokeWidth={1.5} />
+      </div>
+      <h1 class="text-xl font-bold text-slate-800">Clinical Monitor</h1>
+      <p class="text-sm text-slate-500">Waiting for EHR launch…</p>
+      <p class="text-xs text-slate-400">This app must be opened from within a Cerner EHR session.</p>
     </div>
   </div>
 {/if}

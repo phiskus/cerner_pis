@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createVital } from './fhir';
-  import { patientId } from './store';
+  import { patientId, debugPost } from './store';
   import { PATIENT_ID_KEY, ENCOUNTER_KEY, USER_KEY } from '../config';
 
   // ─── Props ──────────────────────────────────────────────────────────────────
@@ -49,13 +49,12 @@
       ],
     },
     {
-      label: 'Pulse Sitting',
-      text: 'Pulse Sitting',
-      unit: 'bpm', ucum: '/min', dual: false,
+      label: 'Heart rate',
+      text: 'Heart rate',
+      unit: 'beats/minute', ucum: '{beats}/min', dual: false,
       codings: [
-        { system: CERNER_SYSTEM, code: '1164554', display: 'Pulse Sitting', userSelected: true },
-       { system: LOINC_SYSTEM,  code: '69000-8', display: 'Heart rate --sitting' },
-        { system: LOINC_SYSTEM,  code: '8867-4',  display: 'Heart rate' },
+        { system: LOINC_SYSTEM, code: '69000-8', display: 'Heart rate --sitting' },
+        { system: LOINC_SYSTEM, code: '8867-4',  display: 'Heart rate' },
       ],
     },
     {
@@ -186,7 +185,7 @@
     error = '';
     submitting = true;
     const obs = buildObservation();
-    console.log('Sending:', JSON.stringify(obs, null, 2));
+    debugPost.set({ label: `POST /Observation (${selectedType.label})`, data: obs, timestamp: new Date().toISOString() });
     try {
       await createVital(obs);
       oncreated();

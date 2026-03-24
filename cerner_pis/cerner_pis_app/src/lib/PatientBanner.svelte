@@ -25,40 +25,46 @@
   }
 
   function mrn(p: Patient | null): string {
-    // Cerner uses identifier.type.coding[].code === 'MR' (HL7 v2 table 0203)
-    // rather than encoding the type in the system URL
-    const id = p?.identifier?.find(
+    if (!p?.identifier?.length) return '—';
+    // Primary: HL7 v2 table 0203 type code 'MR' (standard Cerner format)
+    const byType = p.identifier.find(
       i => i.type?.coding?.some(c => c.code === 'MR')
     );
-    return id?.value ?? '—';
+    if (byType?.value) return byType.value;
+    // Fallback: identifier marked as 'usual' use
+    const byUse = p.identifier.find(i => i.use === 'usual');
+    if (byUse?.value) return byUse.value;
+    // Last resort: first identifier with a value (show with asterisk so it's obvious it's a fallback)
+    const first = p.identifier.find(i => i.value);
+    return first ? `${first.value}*` : '—';
   }
 </script>
 
-<div class="bg-blue-700 text-white px-6 py-4">
-  <div class="max-w-4xl mx-auto flex items-center gap-5">
+<div class="bg-slate-50 border-b border-slate-200 px-6 py-3">
+  <div class="flex items-center gap-4">
 
     <!-- Avatar -->
-    <div class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center font-bold text-lg shrink-0">
+    <div class="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center font-bold text-sm text-white shrink-0">
       {initials($patient)}
     </div>
 
     <!-- Demographics -->
-    <div class="flex flex-wrap gap-x-8 gap-y-1">
+    <div class="flex flex-wrap gap-x-8 gap-y-0.5">
       <div>
-        <p class="text-xs text-blue-200 uppercase tracking-wide">Patient</p>
-        <p class="font-semibold text-base">{fullName($patient)}</p>
+        <p class="text-[10px] text-slate-400 uppercase tracking-widest">Patient</p>
+        <p class="font-semibold text-sm text-slate-800">{fullName($patient)}</p>
       </div>
       <div>
-        <p class="text-xs text-blue-200 uppercase tracking-wide">DOB</p>
-        <p class="font-medium">{$patient?.birthDate ?? '—'} <span class="text-blue-300 text-sm">({age($patient?.birthDate)})</span></p>
+        <p class="text-[10px] text-slate-400 uppercase tracking-widest">DOB</p>
+        <p class="font-medium text-sm text-slate-700">{$patient?.birthDate ?? '—'} <span class="text-slate-400 text-xs">({age($patient?.birthDate)})</span></p>
       </div>
       <div>
-        <p class="text-xs text-blue-200 uppercase tracking-wide">Gender</p>
-        <p class="font-medium capitalize">{$patient?.gender ?? '—'}</p>
+        <p class="text-[10px] text-slate-400 uppercase tracking-widest">Gender</p>
+        <p class="font-medium text-sm text-slate-700 capitalize">{$patient?.gender ?? '—'}</p>
       </div>
       <div>
-        <p class="text-xs text-blue-200 uppercase tracking-wide">MRN</p>
-        <p class="font-medium">{mrn($patient)}</p>
+        <p class="text-[10px] text-slate-400 uppercase tracking-widest">MRN</p>
+        <p class="font-medium text-sm text-slate-700">{mrn($patient)}</p>
       </div>
     </div>
 
